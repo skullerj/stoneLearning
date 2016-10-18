@@ -18,4 +18,5 @@ before_script:
 script:
   - xvfb-run polymer test
 after_success:
+  - polymer build
   - firebase deploy --token ${FIREBASE_TOKEN}
