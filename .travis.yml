@@ -10,10 +10,12 @@ addons:
       - google-chrome-stable
 node_js:
   - '6'
-  - '5'
-  - '4'
+install:
+  - npm install -g firebase-tools
 before_script:
   - npm install -g bower polymer-cli
   - bower install
 script:
   - xvfb-run polymer test
+after_success:
+  - firebase deploy --token ${FIREBASE_TOKEN}
