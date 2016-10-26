@@ -1,0 +1,96 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="main-view">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        padding: 10px;
+        max-width: 500px;
+      }
+    </style>
+    <firebase-auth id="auth" user="{{user}}" provider="local" on-error="_handleAuthError" >
+    </firebase-auth>
+    <iron-pages selected="[[page]]" attr-for-selected="name">
+      <section name="start">
+        <form is="iron-form" id="loginForm" method="post" on-iron-form-presubmit="_loginPresubmit">
+          <div class="vertical layout center-center">
+            <paper-input label="Email" id="email" value="{{email}}" type="text" required error-message="Invalid email!"></paper-input>
+            <paper-input label="Password" type="password" id="password" value="{{password}}"></paper-input>
+            <div class="horizontal layout">
+              <paper-button id="login" raised on-click="_submitLoginForm">Login</paper-button>
+              <paper-button id="register" on-click="_goRegister">Register</paper-button>
+            </div>
+          </div>
+        </form>
+      </section>
+      <section name="register">
+        <paper-button raised id="back" on-click="_goStart">Back</paper-button>
+        <div class="vertical layout center-center">
+          <paper-input label="Email"></paper-input>
+          <paper-input label="Password" type="password"></paper-input>
+          <paper-button raised></paper-button>
+        </div>
+      </section>
+      <section></section>
+    </iron-pages>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'main-view',
+      properties:{
+        page:{
+          type:String,
+          value:'start'
+        },
+        user:{
+          type:Object,
+          value:null
+        }
+      },
+      _goRegister:function(){
+        this.page='register';
+      },
+      _goStart:function(){
+        this.page='start';
+      },
+      _loginPresubmit:function(e){
+        e.preventDefault();
+        var self=this;
+        this.$.auth.signInWithEmailAndPassword(this.email,this.password)
+        .then(function(response) {
+          console.log(response);
+          self.fire('login-sucess',response);
+        })
+        .catch(function(error) {
+          console.log(error);
+          self.fire('login-failure',error);
+        });
+      },
+      _handleAuthError:function(e){
+
+      },
+      _submitLoginForm:function(e){
+        this.$.loginForm.submit();
+      }
+    });
+  </script>
+</dom-module>

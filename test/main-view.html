@@ -14,33 +14,55 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-    <title>my-view1</title>
+    <title>main-view</title>
 
     <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../bower_components/web-component-tester/browser.js"></script>
 
     <!-- Import the element to test -->
-    <link rel="import" href="../src/my-view1.html">
+    <link rel="import" href="../src/main-view.html">
   </head>
   <body>
     <test-fixture id="basic">
       <template>
-        <my-view1></my-view1>
+        <main-view></main-view>
       </template>
     </test-fixture>
 
     <script>
-      suite('my-view1 tests', function() {
+      suite('main-view tests', function() {
         var home;
 
         setup(function() {
           home = fixture('basic');
         });
 
-        test('Number in circle should be 1', function() {
-          var circle = Polymer.dom(home.root).querySelector('.circle');
-          assert.equal(circle.textContent, '1');
-        })
+        test('should return its name', function(){
+          assert.equal(home.is,'main-view');
+        });
+        test('should initialize the page in \'start\'', function(){
+          assert.equal(home.page,'start');
+        });
+        test('should change the page when register is hitted',function(){
+          home.$.register.click();
+          assert(home.page,'register');
+        });
+        test('should return to starting page',function(){
+          home.$.back.click();
+          assert(home.page,'start');
+        });
+        test('shouldn\'t let the user continue with invalid values',function(){
+          home.email='t';
+          home.password='t';
+          assert(home.$.loginForm.validate(),false);
+        });
+        test('should let the user continue with valid values',function(){
+          home.email='test@test.com';
+          home.password='test123123';
+          assert(home.$.loginForm.validate());
+        });
+
+
       });
     </script>
   </body>
